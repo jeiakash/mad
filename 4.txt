@@ -1,0 +1,279 @@
+import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart'; // To play video
+// For audio you could use audioplayers package (not shown to keep short)
+
+void main() {
+  runApp(MyApp()); // Entry point of Flutter app
+}
+
+// --------------------- ROOT APP ----------------------
+class MyApp extends StatelessWidget {
+  // Stateless because it does not hold changing data
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false, // Remove debug banner
+      title: "Flutter Big Demo",
+      theme: ThemeData(
+        primarySwatch: Colors.teal, // Theme color
+        fontFamily: 'Roboto', // Example of custom font
+      ),
+      home: HomePage(), // First screen
+    );
+  }
+}
+
+// --------------------- HOME PAGE ----------------------
+class HomePage extends StatefulWidget {
+  // Stateful because it uses TextField + needs setState
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final TextEditingController _controller = TextEditingController(); // To get text input
+  String? _selectedTime;
+  DateTime? _selectedDate;
+
+  // Async function for DatePicker
+  Future<void> _pickDate() async {
+    final picked = await showDatePicker( // Await pauses until user picks date
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      setState(() => _selectedDate = picked); // Update UI with picked date
+    }
+  }
+
+  // Async function for TimePicker
+  Future<void> _pickTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (picked != null) {
+      setState(() => _selectedTime = picked.format(context)); // Update state
+    }
+  }
+
+  void _showDialog() {
+    // Shows AlertDialog
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text("Alert"),
+        content: Text("This is an AlertDialog example."),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text("OK")),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // Scaffold gives page structure
+      appBar: AppBar(title: Text("Home Page")), // Top bar
+
+      body: ListView(
+        // Scrollable column (better than Column for long content)
+        padding: EdgeInsets.all(16),
+        children: [
+          Center(
+            child: Text("Welcome to Flutter Demo",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          ),
+
+          SizedBox(height: 20),
+
+          // Image from Asset (needs asset in pubspec.yaml)
+          Image.asset("assets/flutter.png", height: 100),
+          SizedBox(height: 10),
+
+          // Image from Network
+          Image.network("https://flutter.dev/images/flutter-logo-sharing.png",
+              height: 100),
+
+          SizedBox(height: 20),
+
+          // Row + Icon Example
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.star, color: Colors.orange),
+              SizedBox(width: 10),
+              Text("Row Example"),
+            ],
+          ),
+
+          SizedBox(height: 20),
+
+          // GestureDetector Example
+          GestureDetector(
+            onTap: () => print("GestureDetector tapped"),
+            child: Container(
+              color: Colors.amber,
+              padding: EdgeInsets.all(10),
+              child: Text("Tap me (GestureDetector)"),
+            ),
+          ),
+
+          SizedBox(height: 20),
+
+          // InkWell Example
+          InkWell(
+            onTap: () => print("InkWell tapped"),
+            child: Container(
+              color: Colors.lightBlueAccent,
+              padding: EdgeInsets.all(10),
+              child: Text("Tap me (InkWell)"),
+            ),
+          ),
+
+          SizedBox(height: 20),
+
+          // TextField Example
+          TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              labelText: "Enter your name",
+              border: OutlineInputBorder(),
+            ),
+          ),
+
+          SizedBox(height: 20),
+
+          // ListTile Example
+          ListTile(
+            leading: Icon(Icons.person),
+            title: Text("User"),
+            subtitle: Text("Subtitle here"),
+          ),
+
+          SizedBox(height: 20),
+
+          // GridView inside fixed height
+          Container(
+            height: 200,
+            child: GridView.count(
+              crossAxisCount: 2,
+              children: List.generate(
+                4,
+                (index) => Container(
+                  margin: EdgeInsets.all(5),
+                  color: Colors.teal[100 * (index + 2)],
+                  child: Center(child: Text("Item $index")),
+                ),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 20),
+
+          // Stack Example
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(width: 200, height: 100, color: Colors.grey),
+              Icon(Icons.play_circle, size: 50, color: Colors.white),
+            ],
+          ),
+
+          SizedBox(height: 20),
+
+          // Chip Example
+          if (_selectedDate != null)
+            Chip(label: Text("Date: ${_selectedDate!.toLocal()}".split(" ")[0])),
+          if (_selectedTime != null) Chip(label: Text("Time: $_selectedTime")),
+
+          SizedBox(height: 20),
+
+          // Buttons to pick Date & Time
+          ElevatedButton(onPressed: _pickDate, child: Text("Pick Date")),
+          ElevatedButton(onPressed: _pickTime, child: Text("Pick Time")),
+
+          SizedBox(height: 20),
+
+          ElevatedButton(onPressed: _showDialog, child: Text("Show AlertDialog")),
+
+          SizedBox(height: 20),
+
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                // Navigation to second page
+                context,
+                MaterialPageRoute(
+                  builder: (_) => VideoPage(name: _controller.text),
+                ),
+              );
+            },
+            child: Text("Go to Video Page"),
+          ),
+        ],
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => print("FAB pressed"), // Floating action button
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+// --------------------- VIDEO PAGE ----------------------
+class VideoPage extends StatefulWidget {
+  final String name; // Data passed from Home
+  VideoPage({required this.name});
+
+  @override
+  _VideoPageState createState() => _VideoPageState();
+}
+
+class _VideoPageState extends State<VideoPage> {
+  VideoPlayerController? _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize video
+    _controller = VideoPlayerController.network(
+      "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
+    )..initialize().then((_) {
+        setState(() {}); // Update after video loads
+        _controller!.play();
+      });
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose(); // Release resources
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Video Page")),
+      body: Center(
+        child: Column(
+          children: [
+            Text("Hello ${widget.name}", style: TextStyle(fontSize: 22)),
+            SizedBox(height: 20),
+            if (_controller != null && _controller!.value.isInitialized)
+              AspectRatio(
+                aspectRatio: _controller!.value.aspectRatio,
+                child: VideoPlayer(_controller!),
+              )
+            else
+              CircularProgressIndicator(),
+          ],
+        ),
+      ),
+    );
+  }
+}

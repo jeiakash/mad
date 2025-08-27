@@ -1,0 +1,113 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Top image
+            Container(
+              height: 200,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/image.png"),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+
+            // Search bar
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: "Where do you want to go?",
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+            ),
+
+            // Categories row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: const [
+                Icon(Icons.flight, size: 30),
+                Icon(Icons.hotel, size: 30),
+                Icon(Icons.directions_car, size: 30),
+                Icon(Icons.explore, size: 30),
+                Icon(Icons.card_giftcard, size: 30),
+              ],
+            ),
+
+            const SizedBox(height: 15),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: Text(
+                "Recommended Places",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+
+            // Cards scroll
+            SizedBox(
+              height: 160,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  _buildCard("assets/paris.jpg", "Parisian Romance"),
+                  _buildCard("assets/patagonia.jpg", "Patagonia Adventure"),
+                  _buildCard("assets/marrakech.jpg", "Marrakech Souk"),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget _buildCard(String image, String title) {
+    return Container(
+      width: 130,
+      margin: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.grey[200],
+      ),
+      child: Column(
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+            ),
+            child: Image.asset(image, height: 90, fit: BoxFit.cover),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

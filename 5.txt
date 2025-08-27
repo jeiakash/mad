@@ -1,0 +1,116 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(TravelApp());
+}
+
+class TravelApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(debugShowCheckedModeBanner: false, home: TravelHome());
+  }
+}
+
+class TravelHome extends StatefulWidget {
+  @override
+  _TravelHomeState createState() => _TravelHomeState();
+}
+
+class _TravelHomeState extends State<TravelHome> {
+  int selectedIndex = 0;
+
+  final List<Map<String, String>> destinations = [
+    {
+      "city": "Paris",
+      "country": "France",
+      "image":
+          "https://upload.wikimedia.org/wikipedia/commons/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg",
+    },
+    {
+      "city": "Venice",
+      "country": "Italy",
+      "image":
+          "https://upload.wikimedia.org/wikipedia/commons/5/57/Venice_Rialto_Bridge_Panorama_2018.jpg",
+    },
+    {
+      "city": "New York",
+      "country": "United States",
+      "image":
+          "https://upload.wikimedia.org/wikipedia/commons/4/4d/1_times_square_night_2013.jpg",
+    },
+    {
+      "city": "Machu Picchu",
+      "country": "Peru",
+      "image":
+          "https://upload.wikimedia.org/wikipedia/commons/e/eb/Machu_Picchu%2C_Peru.jpg",
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.pink.shade200,
+      appBar: AppBar(
+        title: Text(
+          "Travel Explorer",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.deepPurple,
+        actions: [Icon(Icons.more_vert), SizedBox(width: 10)],
+      ),
+      body: ListView.builder(
+        padding: EdgeInsets.all(12),
+        itemCount: destinations.length,
+        itemBuilder: (context, index) {
+          return Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            margin: EdgeInsets.symmetric(vertical: 10),
+            color:
+                [
+                  Colors.red.shade300,
+                  Colors.teal.shade300,
+                  Colors.red.shade300,
+                  Colors.amber.shade300,
+                ][index % 4],
+            child: ListTile(
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  destinations[index]['image']!,
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              title: Text(
+                destinations[index]['city']!,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(destinations[index]['country']!),
+            ),
+          );
+        },
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.teal,
+        currentIndex: selectedIndex,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white70,
+        onTap: (index) {
+          setState(() {
+            selectedIndex = index;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: "Favorites",
+          ),
+        ],
+      ),
+    );
+  }
+}

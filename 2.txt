@@ -1,0 +1,186 @@
+import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart'; // Add video_player in pubspec.yaml
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "Flutter Demo",
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        fontFamily: 'Roboto', // Example of custom font
+      ),
+      home: HomePage(),
+    );
+  }
+}
+
+// ---------------------- HOME PAGE -----------------------
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Home Page")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                labelText: "Enter your name",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 20),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailsPage(name: _controller.text),
+                  ),
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.all(16),
+                color: Colors.blue,
+                child: Text(
+                  "Go to Details",
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------- DETAILS PAGE -----------------------
+class DetailsPage extends StatefulWidget {
+  final String name;
+  DetailsPage({required this.name});
+
+  @override
+  _DetailsPageState createState() => _DetailsPageState();
+}
+
+class _DetailsPageState extends State<DetailsPage> {
+  DateTime? _selectedDate;
+  VideoPlayerController? _videoController;
+
+  Future<void> _pickDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
+
+  void _showDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Play Video?"),
+        content: Text("Do you want to play a demo video?"),
+        actions: [
+          TextButton(
+            child: Text("No"),
+            onPressed: () => Navigator.pop(context),
+          ),
+          TextButton(
+            child: Text("Yes"),
+            onPressed: () {
+              Navigator.pop(context);
+              _playVideo();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _playVideo() {
+    _videoController = VideoPlayerController.network(
+      "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
+    )..initialize().then((_) {
+        setState(() {});
+        _videoController!.play();
+      });
+  }
+
+  @override
+  void dispose() {
+    _videoController?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Details Page")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text("Hello, ${widget.name}",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            SizedBox(height: 20),
+
+            // Date picker button
+            ElevatedButton(
+              onPressed: _pickDate,
+              child: Text("Pick a Date"),
+            ),
+            SizedBox(height: 10),
+
+            // Chip with date
+            if (_selectedDate != null)
+              Chip(
+                label: Text(
+                  "${_selectedDate!.day}-${_selectedDate!.month}-${_selectedDate!.year}",
+                ),
+                backgroundColor: Colors.lightBlueAccent,
+              ),
+
+            SizedBox(height: 20),
+
+            ElevatedButton(
+              onPressed: _showDialog,
+              child: Text("Show AlertDialog"),
+            ),
+
+            SizedBox(height: 20),
+
+            // Video player
+            if (_videoController != null && _videoController!.value.isInitialized)
+              AspectRatio(
+                aspectRatio: _videoController!.value.aspectRatio,
+                child: VideoPlayer(_videoController!),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}

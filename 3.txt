@@ -1,0 +1,124 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.grey,
+        body: Column(
+          children: [
+            // Top Image
+            Container(
+              height: 200,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/image.png"),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+
+            // Search Bar
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: "Where do you want to go?",
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+            ),
+
+            // Category Icons
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: const [
+                Icon(Icons.flight, size: 30),
+                Icon(Icons.hotel, size: 30),
+                Icon(Icons.directions_car, size: 30),
+                Icon(Icons.explore, size: 30),
+                Icon(Icons.card_giftcard, size: 30),
+              ],
+            ),
+
+            const SizedBox(height: 15),
+
+            // Section Title
+            const Text(
+              "Recommended Places",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+
+            const SizedBox(height: 10),
+
+            // 3 Cards in a Row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  width: 110,
+                  color: Colors.grey[200],
+                  child: Column(
+                    children: [
+                      Image.asset("assets/paris.jpg",
+                          height: 80, fit: BoxFit.cover),
+                      const Text(
+                        "Parisian Romance",
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 110,
+                  color: Colors.grey[200],
+                  child: Column(
+                    children: [
+                      Image.asset("assets/patagonia.jpg",
+                          height: 80, fit: BoxFit.cover),
+                      const Text(
+                        "Patagonia Adventure",
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 110,
+                  color: Colors.grey[200],
+                  child: Column(
+                    children: [
+                      Image.asset("assets/marrakech.jpg",
+                          height: 80, fit: BoxFit.cover),
+                      const Text(
+                        "Marrakech Souk",
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
