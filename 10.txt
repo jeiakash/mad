@@ -1,0 +1,106 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(BmiApp());
+}
+
+class BmiApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "BMI Calculator",
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: BmiHomePage(),
+    );
+  }
+}
+
+class BmiHomePage extends StatefulWidget {
+  @override
+  _BmiHomePageState createState() => _BmiHomePageState();
+}
+
+class _BmiHomePageState extends State<BmiHomePage> {
+  final TextEditingController weightController = TextEditingController();
+  final TextEditingController heightController = TextEditingController();
+
+  double? bmi;
+  String? result;
+
+  void calculateBMI() {
+    double weight = double.tryParse(weightController.text) ?? 0;
+    double height = double.tryParse(heightController.text) ?? 0;
+
+    if (weight > 0 && height > 0) {
+      double value = weight / (height * height);
+
+      setState(() {
+        bmi = value;
+        if (value < 18.5) {
+          result = "You are Underweight";
+        } else if (value >= 18.5 && value < 24.9) {
+          result = "You have Normal weight";
+        } else if (value >= 25 && value < 29.9) {
+          result = "You are Overweight";
+        } else {
+          result = "You are Obese";
+        }
+      });
+    } else {
+      setState(() {
+        bmi = null;
+        result = "Please enter valid numbers";
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("BMI Calculator")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              controller: weightController,
+              decoration: InputDecoration(
+                labelText: "Enter weight (kg)",
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            SizedBox(height: 16),
+            TextField(
+              controller: heightController,
+              decoration: InputDecoration(
+                labelText: "Enter height (m)",
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: calculateBMI,
+              child: Text("Calculate BMI"),
+            ),
+            SizedBox(height: 20),
+            if (bmi != null) ...[
+              Text(
+                "Your BMI is: ${bmi!.toStringAsFixed(2)}",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Text(
+                result ?? "",
+                style: TextStyle(fontSize: 18, color: Colors.teal),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
